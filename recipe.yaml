@@ -60,7 +60,9 @@ build:
         -lssl -lcrypto
         -Wl,-rpath,$PREFIX/lib
     # ── json: simdjson FFI wrapper (loaded at runtime by json) ───────────
-    - $CXX -O3 -std=c++17 -fPIC -DNDEBUG -shared
+    # simdjson >= 4.6 no longer pulls <iterator> in transitively, so
+    # std::inserter must be declared explicitly for libc++.
+    - $CXX -O3 -std=c++17 -fPIC -DNDEBUG -include iterator -shared
         -o $PREFIX/lib/libsimdjson_wrapper.so
         json-src/json/cpu/simdjson_ffi/simdjson_wrapper.cpp
         -I$PREFIX/include
